@@ -1,0 +1,23 @@
+{
+  "name": "pack-and-find",
+  "version": "1.0.0",
+  "description": "📦A handy app that helps you to track your items packed in your boxes when you move to another place :)",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BillCao1997/pack-and-find.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BillCao1997/pack-and-find/issues"
+  },
+  "homepage": "https://github.com/BillCao1997/pack-and-find#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0"
+  }
+}
