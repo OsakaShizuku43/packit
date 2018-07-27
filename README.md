@@ -11,6 +11,7 @@ Method:
 - `POST`
 
 Params:
+
 | Name     | Required? | Type   |
 | -------- | --------- | ------ |
 | username | yes       | string |
@@ -39,6 +40,7 @@ Method:
 - `POST`
 
 Params:
+
 | Name     | Required? | Type   |
 | -------- | --------- | ------ |
 | username | yes       | string |
