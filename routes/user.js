@@ -82,39 +82,8 @@ router.post('/register', (req, res) => {
     });
 });
 
-// Auth middleware
-router.use((req, res, next) => {
-    const authToken = req.headers.authorization;
-    
-    // No token present
-    if (typeof authToken === 'undefined') {
-        res.sendStatus(401);
-        return;
-    }
-
-    // Verify token
-    let userInfo;
-    try {
-        userInfo = jwt.verify(authToken, process.env.JWT_SECRET);
-    } catch(err) {
-        res.sendStatus(401);
-        return;
-    }
-
-    // Check if user info exists
-    if (typeof userInfo.user === 'undefined') {
-        res.sendStatus(401);
-        return;
-    }
-
-    req.user = userInfo;
-    next();
-});
-
-// User routes
-router.get('/', (req, res) => {
-    res.json(req.user);
-})
+// Fall through to default response for everything else
+// router.all('*', (req, res, next) => next());
 
 
 export default router;

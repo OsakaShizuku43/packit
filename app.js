@@ -22,8 +22,41 @@ app.use(bodyParser.urlencoded({extended: true}));
 raven.config(process.env.SENTRY_DSN).install();
 app.use(raven.requestHandler());
 
+// Authentication Middleware
+// Auth middleware
+const auth = (req, res, next) => {
+    const authToken = req.headers.authorization;
+    
+    // No token present
+    if (typeof authToken === 'undefined') {
+        res.sendStatus(401);
+        return;
+    }
+
+    // Verify token
+    let userInfo;
+    try {
+        userInfo = jwt.verify(authToken, process.env.JWT_SECRET);
+    } catch(err) {
+        res.sendStatus(401);
+        return;
+    }
+
+    // Check if user info exists
+    if (typeof userInfo.username === 'undefined') {
+        res.sendStatus(401);
+        return;
+    }
+
+    req.user = userInfo;
+    next();
+};
+
 // Routes
 app.use('/api/user', userRouter);
+app.use(auth);                      // Everything now on requires auth
+
+
 
 // Error Handler
 app.use(raven.errorHandler());
