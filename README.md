@@ -11,10 +11,10 @@ Method:
 - `POST`
 
 Params:
-| Name | Required? | Type |
-| --- | --- | --- | --- |
-| username | yes | string |
-| password | yes | string |
+| Name     | Required? | Type   |
+| -------- | --------- | ------ |
+| username | yes       | string |
+| password | yes       | string |
 
 Success Response:
 ```JSON
@@ -39,10 +39,10 @@ Method:
 - `POST`
 
 Params:
-| Name | Required? | Type |
-| --- | --- | --- | --- |
-| username | yes | string |
-| password | yes | string |
+| Name     | Required? | Type   |
+| -------- | --------- | ------ |
+| username | yes       | string |
+| password | yes       | string |
 
 Success Response:
 ```JSON
