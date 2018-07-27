@@ -8,25 +8,26 @@ const router = express.Router();
 import User from '../models/User';
 
 // Middleware function
-const requireCredential = (req, res, next) => {
+router.use((req, res, next) => {
     if (req.body.username === undefined || req.body.password === undefined) {
         res.status(400).json({ error: true });
         return;
     }
     next();
-}
+});
 
 // Routes without authentication needed
-router.post('/login', requireCredential);
 router.post('/login', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
+    let userId;
     User.findOne({ username }).exec()
     .then((user) => {
         if (user === null) {
             res.status(401).json({ error: true, message: 'Invalid credential' });
             throw new Error('STOP');
         }
+        userId = user._id;
         return bcrypt.compare(password, user.password);
     })
     .then((result) => {
@@ -34,7 +35,7 @@ router.post('/login', (req, res) => {
             res.status(401).json({ error: true, message: 'Invalid credential' });
             throw new Error('STOP');
         }
-        return jwt.sign({ username: username }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        return jwt.sign({ userId, username }, process.env.JWT_SECRET, { expiresIn: '1d' });
     })
     .then((token) => {
         res.json({ error: false, token: token });
@@ -45,8 +46,8 @@ router.post('/login', (req, res) => {
     });
 });
 
-router.post('/register', requireCredential);
 router.post('/register', (req, res) => {
+    if (req.body.invitation !== process.env.INVITATION) return res.sendStatus(400);
     const username = req.body.username;
     const password = req.body.password;
     const salt = bcrypt.genSaltSync(10);

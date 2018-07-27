@@ -3,11 +3,16 @@ import raven from 'raven';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
 
 // Routers
 import userRouter from './routes/user';
+import boxRouter from './routes/box';
 
 // MongoDB connection
+if (process.env.MONGODB_URI === undefined) {
+    throw Error('No MONGODB_URI found. Did you source env.sh?');
+}
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true }, () => {
     console.log('Connected to MongoDB');
 });
@@ -23,15 +28,21 @@ raven.config(process.env.SENTRY_DSN).install();
 app.use(raven.requestHandler());
 
 // Authentication Middleware
-// Auth middleware
 const auth = (req, res, next) => {
-    const authToken = req.headers.authorization;
+    const authHeader = req.headers.authorization;
     
     // No token present
-    if (typeof authToken === 'undefined') {
+    if (typeof authHeader === 'undefined') {
         res.sendStatus(401);
         return;
     }
+
+    const authArray = authHeader.split(' ');
+    if (authArray[0] !== 'Bearer' || authArray[1] === undefined) {
+        res.sendStatus(401);
+        return;
+    }
+    const authToken = authArray[1];
 
     // Verify token
     let userInfo;
@@ -43,7 +54,7 @@ const auth = (req, res, next) => {
     }
 
     // Check if user info exists
-    if (typeof userInfo.username === 'undefined') {
+    if (typeof userInfo.userId === 'undefined') {
         res.sendStatus(401);
         return;
     }
@@ -55,14 +66,16 @@ const auth = (req, res, next) => {
 // Routes
 app.use('/api/user', userRouter);
 app.use(auth);                      // Everything now on requires auth
-
+app.use('/api/box', boxRouter);
 
 
 // Error Handler
 app.use(raven.errorHandler());
 app.use((err, req, res, next) => {
-    res.statusCode = 500;
-    res.end(res.sentry + '\n');
+    res.status(500).json({
+        error: true,
+        message: res.sentry + '\n'
+    });
 });
 
 // Server setup

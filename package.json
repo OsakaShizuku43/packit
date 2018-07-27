@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/BillCao1997/pack-and-find#readme",
   "dependencies": {
+    "aws-sdk": "^2.282.1",
     "bcrypt": "^3.0.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
