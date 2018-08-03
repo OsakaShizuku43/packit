@@ -8,10 +8,12 @@ import jwt from 'jsonwebtoken';
 // Routers
 import userRouter from './routes/user';
 import boxRouter from './routes/box';
+import itemRouter from './routes/item';
 
 // MongoDB connection
 if (process.env.MONGODB_URI === undefined) {
-    throw Error('No MONGODB_URI found. Did you source env.sh?');
+    console.error('No MONGODB_URI found. Did you source env.sh?');
+    process.exit(1);
 }
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true }, () => {
     console.log('Connected to MongoDB');
@@ -67,16 +69,11 @@ const auth = (req, res, next) => {
 app.use('/api/user', userRouter);
 app.use(auth);                      // Everything now on requires auth
 app.use('/api/box', boxRouter);
+app.use('/api/item', itemRouter);
 
 
 // Error Handler
 app.use(raven.errorHandler());
-app.use((err, req, res, next) => {
-    res.status(500).json({
-        error: true,
-        message: res.sentry + '\n'
-    });
-});
 
 // Server setup
 const port = process.env.PORT || 8080;

@@ -22,28 +22,28 @@ router.post('/login', (req, res) => {
     const password = req.body.password;
     let userId;
     User.findOne({ username }).exec()
-    .then((user) => {
-        if (user === null) {
-            res.status(401).json({ error: true, message: 'Invalid credential' });
-            throw new Error('STOP');
-        }
-        userId = user._id;
-        return bcrypt.compare(password, user.password);
-    })
-    .then((result) => {
-        if (!result) {
-            res.status(401).json({ error: true, message: 'Invalid credential' });
-            throw new Error('STOP');
-        }
-        return jwt.sign({ userId, username }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    })
-    .then((token) => {
-        res.json({ error: false, token: token });
-    })
-    .catch((err) => {
-        if (err.message === 'STOP') return;
-        throw err;
-    });
+        .then((user) => {
+            if (user === null) {
+                res.status(401).json({ error: true, message: 'Invalid credential' });
+                throw new Error('STOP');
+            }
+            userId = user._id;
+            return bcrypt.compare(password, user.password);
+        })
+        .then((result) => {
+            if (!result) {
+                res.status(401).json({ error: true, message: 'Invalid credential' });
+                throw new Error('STOP');
+            }
+            return jwt.sign({ userId, username }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        })
+        .then((token) => {
+            res.json({ error: false, token: token });
+        })
+        .catch((err) => {
+            if (err.message === 'STOP') return;
+            throw err;
+        });
 });
 
 router.post('/register', (req, res) => {
@@ -54,33 +54,33 @@ router.post('/register', (req, res) => {
     const hashedPassword = bcrypt.hashSync(password, salt);
 
     User.findOne({ username }).exec()
-    .then((user) => {
-        if (user !== null) {
-            res.status(400).json({
-                error: true,
-                message: 'Username already taken'
+        .then((user) => {
+            if (user !== null) {
+                res.status(400).json({
+                    error: true,
+                    message: 'Username already taken'
+                });
+                throw new Error('STOP');
+            }
+            const newUser = new User({
+                username: username,
+                password: hashedPassword
             });
-            throw new Error('STOP');
-        }
-        const newUser = new User({
-            username: username,
-            password: hashedPassword
+            return newUser.save();
+        })
+        .then(() => {
+            res.json({ error: false });
+        })
+        .catch((err) => {
+            if (err.message === 'STOP') {
+                return;
+            } else {
+                res.status(500).json({
+                    error: true
+                });
+                throw err;
+            }
         });
-        return newUser.save();
-    })
-    .then((user) => {
-        res.json({ error: false });
-    })
-    .catch((err) => {
-        if (err.message === 'STOP') {
-            return;
-        } else {
-            res.status(500).json({
-                error: true
-            });
-            throw err;
-        }
-    });
 });
 
 // Fall through to default response for everything else

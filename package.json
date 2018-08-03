@@ -4,9 +4,11 @@
   "description": "📦A handy app that helps you to track your items packed in your boxes when you move to another place :)",
   "main": "app.js",
   "scripts": {
-    "start": "babel-node app.js",
+    "start": "NODE_ENV=production babel-node app.js --presets es2015,stage-2",
     "dev": "nodemon app.js --exec babel-node --presets es2015,stage-2",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint app.js routes/*.js models/*.js",
+    "lint:create": "eslint --init"
   },
   "repository": {
     "type": "git",
@@ -31,6 +33,7 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
-    "babel-preset-stage-2": "^6.24.1"
+    "babel-preset-stage-2": "^6.24.1",
+    "eslint": "^5.2.0"
   }
 }

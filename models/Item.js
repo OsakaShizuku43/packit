@@ -16,6 +16,15 @@ const itemSchema = new Schema({
     },
     imageURL: {
         type: String
+    },
+    belongsTo: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    insideBox: {
+        type: Schema.Types.ObjectId,
+        ref: 'Box'
     }
 });
 

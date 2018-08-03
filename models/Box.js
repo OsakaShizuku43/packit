@@ -10,10 +10,6 @@ const boxSchema = new Schema({
     name: {
         type: String
     },
-    items: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Item'
-    }],
     imageURL: {
         type: String
     }
