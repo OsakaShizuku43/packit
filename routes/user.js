@@ -9,7 +9,9 @@ import User from '../models/User';
 
 // Middleware function
 router.use((req, res, next) => {
-    if (req.body.username === undefined || req.body.password === undefined) {
+    const username = req.body.username;
+    const password = req.body.password;
+    if (username === undefined || password === undefined || typeof username !== 'string' || typeof password !== 'string') {
         res.status(400).json({ error: true });
         return;
     }
