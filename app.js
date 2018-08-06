@@ -1,6 +1,7 @@
 import express from 'express';
 import raven from 'raven';
 import morgan from 'morgan';
+import path from 'path';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
@@ -22,6 +23,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true }, () => {
 // Express setup
 const app = express();
 app.use(morgan('combined'));
+app.use(express.static(path.join(__dirname, 'public')));        // Required for frontend
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -32,7 +34,7 @@ app.use(raven.requestHandler());
 // Authentication Middleware
 const auth = (req, res, next) => {
     const authHeader = req.headers.authorization;
-    
+
     // No token present
     if (typeof authHeader === 'undefined') {
         res.sendStatus(401);
@@ -66,6 +68,9 @@ const auth = (req, res, next) => {
 };
 
 // Routes
+app.get('/', (request, response) => {
+    response.sendFile(__dirname + '/public/index.html');    // For React
+});
 app.use('/api/user', userRouter);
 app.use(auth);                      // Everything now on requires auth
 app.use('/api/box', boxRouter);
@@ -77,6 +82,8 @@ app.use(raven.errorHandler());
 
 // Server setup
 const port = process.env.PORT || 8080;
-app.listen(port, () => {
-    console.log('Server listening at port ' + port);
+app.listen(port, (error) => {
+    error
+        ? console.log('ERROR:', error)
+        : console.log('🌎 Server listening at port ' + port);
 });

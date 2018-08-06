@@ -76,12 +76,11 @@ router.post('/register', (req, res) => {
         .catch((err) => {
             if (err.message === 'STOP') {
                 return;
-            } else {
-                res.status(500).json({
-                    error: true
-                });
-                throw err;
             }
+            res.status(500).json({
+                error: true
+            });
+            throw err;
         });
 });
 

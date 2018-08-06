@@ -15,7 +15,7 @@ router.post('/', (req, res, next) => {
     }
     Box.findById(req.body.boxId).exec()
         .then((box) => {
-            let boxId = box === null ? undefined : box._id;
+            const boxId = box === null ? undefined : box._id;
             if (box !== null && box.belongsTo.toString() !== req.user.userId) {
                 res.status(403).json({ error: true, message: 'This box does not belong to you.' });
                 throw Error('STOP');
@@ -52,7 +52,7 @@ router.get('/', (req, res) => {
 
 // Search all items by name
 router.get('/name/:name', (req, res) => {
-    Item.find({ 
+    Item.find({
         name: { $regex: '.*' + req.params.name + '.*' },
         belongsTo: req.user.userId
     })

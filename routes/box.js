@@ -71,19 +71,18 @@ router.put('/:boxId', (req, res, next) => {
                 throw new Error('STOP');
             }
             let modified = false;
-            if (req.body.name != undefined && req.body.name.trim() !== '') {
+            if (req.body.name !== undefined && req.body.name !== null && req.body.name.trim() !== '') {
                 box.name = req.body.name;
                 modified = true;
             }
-            if (req.body.imageURL != undefined && req.body.imageURL.trim() !== '') {
+            if (req.body.imageURL !== undefined && req.body.imageURL !== null && req.body.imageURL.trim() !== '') {
                 box.imageURL = req.body.imageURL;
                 modified = true;
             }
             if (modified) {
                 return box.save();
-            } else {
-                return Promise.resolve(box);
             }
+            return Promise.resolve(box);
         })
         .then((modifiedBox) => res.json({ error: false, box: modifiedBox }))
         .catch((err) => {
