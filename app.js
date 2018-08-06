@@ -94,10 +94,10 @@ app.get('/', (request, response) => {
 
 // Routes
 app.use('/api/user', userRouter);
-app.use(auth);                      // Everything now on requires auth
-app.use('/api/box', boxRouter);
-app.use('/api/item', itemRouter);
-app.post('/api/image', upload.single('image'), (req, res) => {
+// app.use(auth);                      // Everything now on requires auth
+app.use('/api/box', auth, boxRouter);
+app.use('/api/item', auth, itemRouter);
+app.post('/api/image', auth, upload.single('image'), (req, res) => {
     const image = req.file;
     if (image === undefined) return res.status(400).json({ error: true, message: 'No image specified' });
 
