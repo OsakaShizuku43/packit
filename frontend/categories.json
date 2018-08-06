@@ -1,0 +1,19 @@
+[
+    { "key": "none", "value": "none", "text": "Category..." },
+    { "key": "clothes", "value": "clothes", "icon": "user secret", "text": "Clothes" },
+    { "key": "study", "value": "study", "icon": "book", "text": "Study" },
+    { "key": "shoes", "value": "shoes", "icon": "paw", "text": "Shoes" },
+    { "key": "file", "value": "file", "icon": "file alternate", "text": "File" },
+    { "key": "souvenir", "value": "souvenir", "icon": "gift", "text": "Souvenir" },
+    { "key": "kitchenware", "value": "kitchenware", "icon": "food", "text": "Kitchenware" },
+    { "key": "ingredients", "value": "ingredients", "icon": "leaf", "text": "Ingredients" },
+    { "key": "cable", "value": "cable", "icon": "plug", "text": "Cable" },
+    { "key": "digital", "value": "digital", "icon": "camera", "text": "Digital Product" },
+    { "key": "electronics", "value": "electronics", "icon": "tv", "text": "Electronics" },
+    { "key": "boardgame", "value": "boardgame", "icon": "chess", "text": "Board Game" },
+    { "key": "cosmetics", "value": "cosmetics", "icon": "eye dropper", "text": "Cosmetics" },
+    { "key": "skincare", "value": "skincare", "icon": "tint", "text": "Skin Care" },
+    { "key": "washset", "value": "washset", "icon": "bath", "text": "Wash Set" },
+    { "key": "gadget", "value": "gadget", "icon": "plus square", "text": "Gadgets" },
+    { "key": "other", "value": "other", "icon": "ellipsis horizontal", "text": "Other" }
+]

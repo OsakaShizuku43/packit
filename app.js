@@ -5,11 +5,17 @@ import path from 'path';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
+import multer from 'multer';
+import fs from 'fs';
 
 // Routers
 import userRouter from './routes/user';
 import boxRouter from './routes/box';
 import itemRouter from './routes/item';
+
+// Credentials
+import imgurCreds from './imgurAPITokens.json';
 
 // MongoDB connection
 if (process.env.MONGODB_URI === undefined) {
@@ -24,6 +30,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true }, () => {
 const app = express();
 app.use(morgan('combined'));
 app.use(express.static(path.join(__dirname, 'public')));        // Required for frontend
+const upload = multer({ dest: './upload/' });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -67,14 +74,48 @@ const auth = (req, res, next) => {
     next();
 };
 
-// Routes
+// For React Frontend
 app.get('/', (request, response) => {
     response.sendFile(__dirname + '/public/index.html');    // For React
 });
+
+// // Control origin of API Call
+// app.use((req, res, next) => {
+//     const allowedOrigins = ['http://localhost:8081', 'https://packit.caozimin.com'];
+//     const origin = req.headers.origin;
+//     if (allowedOrigins.indexOf(origin) >= 0) {
+//         res.header('Access-Control-Allow-Origin', origin);
+//     }
+//     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//     res.header('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+//     res.header('Access-Control-Allow-Credentials', true);
+//     next();
+// });
+
+// Routes
 app.use('/api/user', userRouter);
 app.use(auth);                      // Everything now on requires auth
 app.use('/api/box', boxRouter);
 app.use('/api/item', itemRouter);
+app.post('/api/image', upload.single('image'), (req, res) => {
+    const image = req.file;
+    if (image === undefined) return res.status(400).json({ error: true, message: 'No image specified' });
+
+    const bitmap = fs.readFileSync(image.path);
+    const imageBase64 = new Buffer(bitmap).toString('base64');
+    axios.post('https://api.imgur.com/3/image',
+        { image: imageBase64, type: 'base64' },
+        { headers: { Authorization: 'Bearer ' + imgurCreds.accessToken }}
+    ).then((resp) => {
+        const url = resp.data.data.link;
+        fs.unlinkSync(image.path);
+        res.json({ error: false, imageURL: url });
+    }).catch((err) => {
+        console.log(JSON.stringify(err.response.data));
+        fs.unlinkSync(image.path);
+        res.status(500).json({ error: true, message: 'Check log for error detail' });
+    });
+});
 
 
 // Error Handler
@@ -85,5 +126,5 @@ const port = process.env.PORT || 8080;
 app.listen(port, (error) => {
     error
         ? console.log('ERROR:', error)
-        : console.log('🌎 Server listening at port ' + port);
+        : console.log(`🌎 Server listening at port ${port}. Visit http://localhost:${port}/`);
 });

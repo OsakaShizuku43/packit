@@ -7,6 +7,23 @@ const router = express.Router();
 // Models
 import User from '../models/User';
 
+// For Token Verification only
+router.post('/verify', (req, res) => {
+    const token = req.headers.authorization;
+    if (token === undefined || typeof token !== 'string') return res.sendStatus(400);
+
+    let userInfo;
+    try {
+        userInfo = jwt.verify(token, process.env.JWT_SECRET);
+        if (typeof userInfo.userId === 'undefined') throw new Error(401);
+    } catch(err) {
+        res.sendStatus(401);
+        return;
+    }
+
+    res.json({ error: false });
+});
+
 // Middleware function
 router.use((req, res, next) => {
     const username = req.body.username;

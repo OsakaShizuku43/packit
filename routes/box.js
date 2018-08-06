@@ -11,10 +11,7 @@ router.get('/', (req, res, next) => {
     const userId = req.user.userId;
     Box.find({ belongsTo: userId }).exec()
         .then((boxes) => {
-            const formatedBoxes = boxes.map((box) => {
-                return { _id: box._id, name: box.name };
-            });
-            res.json({ error: false, boxes: formatedBoxes });
+            res.json({ error: false, boxes: boxes });
         })
         .catch((err) => next(err));
 });
@@ -29,6 +26,7 @@ router.post('/', (req, res, next) => {
     const newBox = new Box({
         belongsTo: userId,
         name: req.body.name,
+        description: req.body.description,
         imageURL: req.body.imageURL
     });
     newBox.save()

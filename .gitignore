@@ -3,3 +3,9 @@ env.sh
 Dockerfile
 .dockerignore
 .DS_Store
+public/*
+!public/bundle.js
+!public/favicon.ico
+!public/index.html
+imgur_cred.json
+imgurAPITokens.json

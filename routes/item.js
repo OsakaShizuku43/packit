@@ -9,13 +9,14 @@ import Box from '../models/Box';
 
 // Create a new item
 router.post('/', (req, res, next) => {
+    console.log(req.body);
     if (req.body.category === undefined || req.body.name === undefined) {
         res.status(400).json({ error: true, message: 'Invalid item information' });
         return;
     }
-    Box.findById(req.body.boxId).exec()
+    Box.findById(req.body.insideBox).exec()
         .then((box) => {
-            const boxId = box === null ? undefined : box._id;
+            const boxId = (box === null ? undefined : box._id);
             if (box !== null && box.belongsTo.toString() !== req.user.userId) {
                 res.status(403).json({ error: true, message: 'This box does not belong to you.' });
                 throw Error('STOP');
@@ -50,19 +51,23 @@ router.get('/', (req, res) => {
         .then((items) => res.json({ error: false, items: items }));
 });
 
-// Search all items by name
-router.get('/name/:name', (req, res) => {
-    Item.find({
-        name: { $regex: '.*' + req.params.name + '.*' },
+// Search all items
+router.get('/search', (req, res) => {
+    const name = req.query.name;
+    const category = req.query.category;
+    const query = {
+        name: { $regex: '^.*' + name.toLowerCase() + '.*', $options: 'i' },
         belongsTo: req.user.userId
-    })
+    };
+    if (category && category.trim().length > 0) query.category = req.query.category;
+    Item.find(query)
         .populate('insideBox')
         .exec()
         .then((items) => res.json({ error: false, items: items }));
 });
 
 // Search all items fall in specific category
-router.get('/category/:category', (req, res) => {
+router.get('/search/:category', (req, res) => {
     Item.find({
         category: req.params.category,
         belongsTo: req.user.userId
