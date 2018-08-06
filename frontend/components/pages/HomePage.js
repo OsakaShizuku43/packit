@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 
 import Boxes from '../home/Boxes';
 import SearchItem from '../home/SearchItem';
-import AddItem from '../home/AddItem';
 
 class HomePage extends Component {
     constructor(props) {
@@ -52,18 +51,19 @@ class HomePage extends Component {
         if (this.state.verifiedLogin === false) return null;
         return (
             <Container>
-                <AddItem boxes={this.state.boxes}/>
+                <Boxes boxes={this.state.boxes} switchPage={this.props.switchPage} openBox={this.props.openBox}/>
                 <Divider />
                 <SearchItem />
-                <Divider />
-                <Boxes boxes={this.state.boxes}/>
+                {/* <Divider />
+                <AddItem boxes={this.state.boxes}/> */}
             </Container>
         );
     }
 }
 
 HomePage.propTypes = {
-    switchPage: PropTypes.func
+    switchPage: PropTypes.func,
+    openBox: PropTypes.func
 };
 
 export default HomePage;

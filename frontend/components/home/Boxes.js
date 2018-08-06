@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Header } from 'semantic-ui-react';
+import { Header, Button  } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 import BoxCard from './BoxCard';
@@ -12,16 +12,23 @@ class Boxes extends Component {
     render() {
         return (
             <div>
-                <Header as="h3" icon="boxes" content="All Boxes" />
+                <div style={{display: 'inline-block'}}>
+                    <Header as="h3" icon="boxes" content="All Boxes" floated="left"/>
+                    <Button
+                        icon="plus" size="small" style={{ float: 'right' }} circular primary
+                        onClick={() => this.props.switchPage(3)}/>
+                </div>
                 {
                     this.props.boxes.length === 0 ? <p style={{ textAlign: 'center' }}>No box available</p> :
                         <div style={{ overflow: 'auto', whiteSpace: 'nowrap' }}>
-                            {this.props.boxes.map((box) => (
+                            {this.props.boxes.slice().reverse().map((box) => (
                                 <BoxCard
                                     key={box._id}
+                                    boxId={box._id}
                                     name={box.name}
                                     description={box.description}
-                                    imageURL={box.imageURL}/>
+                                    imageURL={box.imageURL}
+                                    openBox={this.props.openBox}/>
                             ))}
                         </div>
                 }
@@ -31,7 +38,9 @@ class Boxes extends Component {
 }
 
 Boxes.propTypes = {
-    boxes: PropTypes.array
+    boxes: PropTypes.array,
+    switchPage: PropTypes.func,
+    openBox: PropTypes.func
 };
 
 export default Boxes;

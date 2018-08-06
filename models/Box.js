@@ -10,6 +10,9 @@ const boxSchema = new Schema({
     name: {
         type: String
     },
+    description: {
+        type: String
+    },
     imageURL: {
         type: String
     }
