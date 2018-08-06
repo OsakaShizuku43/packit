@@ -4,6 +4,9 @@ Dockerfile
 .dockerignore
 .DS_Store
 public/*
+public/images/.DS_Store
+!public/images
+!public/images/*
 !public/bundle.js
 !public/favicon.ico
 !public/index.html
