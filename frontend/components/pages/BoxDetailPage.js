@@ -3,6 +3,7 @@ import { Header, Container, Image, Divider, Button } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 import AddItem from '../box/AddItem';
+import AllItemsInBox from '../box/AllItemsInBox';
 
 class BoxDetailPage extends Component {
     constructor(props) {
@@ -56,7 +57,7 @@ class BoxDetailPage extends Component {
                 <Divider />
                 <AddItem boxId={this.props.boxId}/>
                 <Divider />
-                <p>All items shown here</p>
+                <AllItemsInBox boxId={this.props.boxId}/>
             </Container>
         );
     }
