@@ -16,6 +16,25 @@ class HomePage extends Component {
     }
 
     componentDidMount() {
+        const token = localStorage.getItem('token');
+        if (token === null) this.props.switchPage(0);
+        fetch('/api/user/verify', {
+            method: 'POST',
+            headers: {
+                Authorization: token
+            }
+        }).then((res) => {
+            if (res.status === 200) return res.json();
+            throw new Error(401);
+        }).then((res) => {
+            if (res.error === false) {
+                this.setState({ verifiedLogin: true });
+                this.getBoxes();
+            }
+        }).catch(() => this.props.switchPage(0));
+    }
+
+    getBoxes() {
         fetch('/api/box', {
             method: 'GET',
             headers: {
