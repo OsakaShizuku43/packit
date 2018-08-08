@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Header, Button, Transition, Form, Input, Segment, Container, Icon, Message } from 'semantic-ui-react';
+import { Header, Button, Transition, Form, Input, Segment, Container, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 import categories from '../../categories.json';
@@ -66,8 +66,9 @@ class AddItem extends Component {
             body: JSON.stringify(data)
         }).then((resp) => {
             return resp.json();
-        }).then(() => {
+        }).then((res) => {
             this.setState({ requestPending: false, addingCategory: 'none' });
+            this.props.prependItemToList(res.item);
         }).catch((err) => {
             console.error(err);
             this.setState({ requestPending: false });
@@ -85,7 +86,7 @@ class AddItem extends Component {
 
     render() {
         return (
-            <div>
+            <Segment>
                 <Header as="h3" icon="plus" content="Add Item" />
                 <div style={{ textAlign: 'center' }}>
                     {
@@ -156,13 +157,14 @@ class AddItem extends Component {
                         </Container>
                     </Segment>
                 </Transition>
-            </div>
+            </Segment>
         );
     }
 }
 
 AddItem.propTypes = {
-    boxId: PropTypes.string
+    boxId: PropTypes.string,
+    prependItemToList: PropTypes.func
 };
 
 export default AddItem;

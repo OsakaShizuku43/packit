@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Header, Form, Input, Dropdown, Container, Button } from 'semantic-ui-react';
+import { Header, Form, Input, Dropdown, Container, Button, Segment } from 'semantic-ui-react';
 
 import categories from '../../categories.json';
 
@@ -25,7 +25,7 @@ class SearchItem extends Component {
 
     render() {
         return (
-            <div>
+            <Segment>
                 <Header as="h3" icon="search" content="Search Items" />
                 <Form>
                     <Form.Field>
@@ -48,7 +48,7 @@ class SearchItem extends Component {
                 <Container style={{textAlign: 'center', marginTop: '10px'}}>
                     <Button onClick={() => this.search()} primary>Search</Button>
                 </Container>
-            </div>
+            </Segment>
         );
     }
 }

@@ -10,7 +10,8 @@ class App extends Component {
         super(props);
         this.state = {
             currentPage: 2,
-            boxOpening: null
+            boxOpening: null,
+            allBoxes: []
         };
     }
 
@@ -19,8 +20,8 @@ class App extends Component {
         window.scrollTo(0, 0);
     }
 
-    openBoxDetailPage(boxId) {
-        this.setState({ currentPage: 4, boxOpening: boxId });
+    openBoxDetailPage(boxId, allBoxes) {
+        this.setState({ currentPage: 4, boxOpening: boxId, allBoxes: allBoxes });
         window.scrollTo(0, 0);
     }
 
@@ -31,11 +32,11 @@ class App extends Component {
             case 1:
                 return <RegisterPage switchPage={(p) => this.switchPage(p)}/>;
             case 2:
-                return <HomePage switchPage={(p) => this.switchPage(p)} openBox={(id) => this.openBoxDetailPage(id)}/>;
+                return <HomePage switchPage={(p) => this.switchPage(p)} openBox={(id, allBoxes) => this.openBoxDetailPage(id, allBoxes)}/>;
             case 3:
                 return <AddBoxPage switchPage={(p) => this.switchPage(p)} />;
             case 4:
-                return <BoxDetailPage switchPage={(p) => this.switchPage(p)} boxId={this.state.boxOpening} />;
+                return <BoxDetailPage switchPage={(p) => this.switchPage(p)} boxId={this.state.boxOpening} allBoxes={this.state.allBoxes}/>;
             default:
                 return <p>Under Construction</p>;
         }
