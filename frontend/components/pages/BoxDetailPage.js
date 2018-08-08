@@ -133,7 +133,7 @@ class BoxDetailPage extends Component {
                         {boxInfo ? boxInfo.name : null}
                     </Header>
                     <div style={{ float: 'right', paddingTop: '13px' }}>
-                        <Button icon="chevron left" circular onClick={() => this.props.switchPage(2)} positive/>
+                        <Button icon="chevron left" circular onClick={() => this.props.switchPage(2)} primary/>
                         &nbsp; &nbsp;
                         <Button icon="pencil alternate" circular onClick={() => this.props.switchPage(3)}/>
                     </div>

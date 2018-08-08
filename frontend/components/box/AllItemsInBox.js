@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Header, List, Button, Transition, Dimmer, Loader, Segment, Dropdown } from 'semantic-ui-react';
+import { Header, List, Button, Transition, Dimmer, Loader, Segment, Dropdown, Select } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 import BoxItem from './BoxItem';
@@ -38,8 +38,18 @@ class AllItemsInBox extends Component {
         this.setState({ itemSelected: copy });
     }
 
+    selectOrDeselectAll(all) {
+        if (all) {
+            const itemSelected = [];
+            this.props.items.forEach(item => itemSelected.push(item._id));
+            this.setState({ itemSelected });
+        } else {
+            this.setState({ itemSelected: [] });
+        }
+    }
+
     async deleteSelectedItems() {
-        if (this.state.itemSelected.length === 0) return;
+        if (this.state.itemSelected.length === 0) return this.toggleEditMode();
         await this.props.deleteSelectedItems(this.state.itemSelected.slice());
         this.toggleEditMode();
     }
@@ -71,42 +81,48 @@ class AllItemsInBox extends Component {
                 </Dimmer>
 
                 <div style={{display: 'inline-block'}}>
-                    <Header as="h3" icon="clipboard list" content="All Items" floated="left"/>
+                    <Header as="h3" icon="clipboard list" content="All Items" floated="left" style={{ marginBottom: '5px' }}/>
                     <div style={{ float: "right" }}>
                         <Button
                             icon={this.state.isEditing ? "close" : "pencil alternate"}
                             circular compact
                             onClick={() => this.toggleEditMode()} disabled={this.props.items.length === 0}/>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        <Transition visible={this.state.isEditing} animation="fade right" duration={500}>
-                            <div style={{ display: 'inline', float: 'right' }}>
-                                <Button
-                                    content="Delete" size="small" compact negative
-                                    onClick={() => {
-                                        this.setState({
-                                            isConfirmingDeletion: !this.state.isConfirmingDeletion,
-                                            isMoving: false
-                                        });
-                                    }}/>
-                                &nbsp;&nbsp;
-                                <Button
-                                    content={this.state.isMoving ? 'Cancel' : 'Move'}
-                                    size="small" compact primary
-                                    onClick={() => {
-                                        this.setState({
-                                            isMoving: !this.state.isMoving,
-                                            isConfirmingDeletion: false,
-                                            destinationBox: null
-                                        });
-                                    }}/>
-                            </div>
-                        </Transition>
                     </div>
                 </div>
+                <Transition visible={this.state.isEditing} animation="fade down" duration={250}>
+                    <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+                        <Button.Group size="small" compact>
+                            <Button
+                                content="Select All"
+                                onClick={() => this.selectOrDeselectAll(true)}/>
+                            <Button.Or />
+                            <Button
+                                content="None"
+                                onClick={() => this.selectOrDeselectAll(false)}/>
+                            <Button
+                                content="Delete" negative
+                                onClick={() => {
+                                    this.setState({
+                                        isConfirmingDeletion: !this.state.isConfirmingDeletion,
+                                        isMoving: false
+                                    });
+                                }}/>
+                            <Button
+                                content={this.state.isMoving ? 'Cancel' : 'Move'} primary
+                                onClick={() => {
+                                    this.setState({
+                                        isMoving: !this.state.isMoving,
+                                        isConfirmingDeletion: false,
+                                        destinationBox: null
+                                    });
+                                }}/>
+                        </Button.Group>
+                    </div>
+                </Transition>
                 <Transition visible={this.state.isMoving} animation="fade down" duration={250} unmountOnHide>
                     <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-                        <Dropdown
-                            placeholder="Select a box" selection options={this.props.boxOptions} style={{ width: '85%' }}
+                        <Select size="small"
+                            placeholder="Select a box" options={this.props.boxOptions} style={{ width: '85%' }}
                             onChange={(e, d) => this.setState({ destinationBox: d.value })} />
                         <Button
                             icon="check" size="tiny" compact circular positive style={{ marginLeft: '10px' }}
