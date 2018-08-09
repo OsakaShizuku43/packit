@@ -16,14 +16,14 @@ class AddBoxPage extends Component {
         this.imageToUpload = null;
     }
 
-    uploadImage() {
+    uploadImage = () => {
         if (this.itemImageInput && this.itemImageInput.files[0] !== undefined) {
             this.imageToUpload = this.itemImageInput.files[0];
             this.setState({ imageSelected: this.imageToUpload.name });
         }
     }
 
-    async createBox() {
+    createBox = async() => {
         if (this.state.name.trim() === '') return;
 
         this.setState({ requestPending: true });
@@ -65,10 +65,17 @@ class AddBoxPage extends Component {
         });
     }
 
+    handleBoxNameChange = e => this.setState({ name: e.target.value });
+
+    handleBoxDescriptionChange = e => this.setState({ description: e.target.value });
+
     render() {
         return (
             <Container>
-                <Button icon="chevron left" content="Back" compact primary style={{ marginBottom: '5px' }} onClick={() => this.props.switchPage(2)} />
+                <Button
+                    icon="chevron left" content="Back" compact primary
+                    style={{ marginBottom: '5px' }}
+                    onClick={() => this.props.switchPage(2)} />
                 <Container style={{textAlign: 'center'}}>
                     <Header as="h2" icon>
                         <Icon name="add square" /> Create a New Box
@@ -81,7 +88,7 @@ class AddBoxPage extends Component {
                             type="text"
                             placeholder="Name of the box..."
                             value={this.state.name}
-                            onChange={(e) => this.setState({ name: e.target.value })}/>
+                            onChange={this.handleBoxNameChange}/>
                     </Form.Field>
                     <Form.Field>
                         <label>Description</label>
@@ -89,7 +96,7 @@ class AddBoxPage extends Component {
                             type="text"
                             placeholder="Description..."
                             value={this.state.description}
-                            onChange={(e) => this.setState({ description: e.target.value })}/>
+                            onChange={this.handleBoxDescriptionChange}/>
                     </Form.Field>
                     <Form.Field inline>
                         <label>Image</label>
@@ -100,7 +107,7 @@ class AddBoxPage extends Component {
                             id="uploadImage"
                             type="file"
                             style={{display: "none"}}
-                            onChange={() => this.uploadImage()}
+                            onChange={this.uploadImage}
                             ref={(input) => { this.itemImageInput = input; }}
                             accept=".jpg, .jpeg, .png"
                         />
@@ -108,7 +115,7 @@ class AddBoxPage extends Component {
                     </Form.Field>
                 </Form>
                 <Container style={{textAlign: 'center', marginTop: '20px'}}>
-                    <Button onClick={() => this.createBox()} loading={this.state.requestPending} size="large" positive>
+                    <Button onClick={this.createBox} loading={this.state.requestPending} size="large" positive>
                         Submit
                     </Button>
                     {this.state.errorMsg !== null ?

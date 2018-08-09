@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Header, Container, Image, Button, Dimmer, Loader } from 'semantic-ui-react';
+import { Header, Container, Image, Button, Dimmer, Loader, Message } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 import AddItem from '../box/AddItem';
 import AllItemsInBox from '../box/AllItemsInBox';
-import EditBoxModal from '../box/EditBoxModal';
+import EditBoxModal from '../modal/EditBoxModal';
+import ConfirmationModal from '../modal/ConfirmationModal';
 
 class BoxDetailPage extends Component {
     constructor(props) {
@@ -17,7 +18,8 @@ class BoxDetailPage extends Component {
                 const boxInfo = { text: box.name, value: box._id, image: { src: null } };
                 boxInfo.image.src = (box.imageURL ? box.imageURL : '/images/default_box.png');
                 return boxInfo;
-            })
+            }),
+            message: null
         };
         // Holds information of all boxes for the moving feature (except the current one opening)
         this.allBoxes = [];
@@ -27,6 +29,7 @@ class BoxDetailPage extends Component {
             boxInfo.image.src = (box.imageURL ? box.imageURL : '/images/default_box.png');
             this.allBoxes.push(boxInfo);
         });
+        this.intervalId = null;
     }
 
     async componentDidMount() {
@@ -50,7 +53,11 @@ class BoxDetailPage extends Component {
         });
     }
 
-    loadBoxInfo() {
+    componentWillUnmount() {
+        if (this.intervalId) clearInterval(this.intervalId);
+    }
+
+    loadBoxInfo = () => {
         this.setState({ boxInfo: null });
         fetch('/api/box/' + this.props.boxId, {
             method: 'GET',
@@ -65,13 +72,13 @@ class BoxDetailPage extends Component {
         });
     }
 
-    prependItemToList(item) {
+    prependItemToList = (item) => {
         const items = this.state.items.slice();
         items.push(item);
         this.setState({ items });
     }
 
-    deleteItemsFromList(itemsToDelete) {
+    deleteItemsFromList = (itemsToDelete) => {
         const items = [];
         this.state.items.forEach(item => {
             if (itemsToDelete.indexOf(item._id) === -1) items.push(item);
@@ -79,7 +86,7 @@ class BoxDetailPage extends Component {
         this.setState({ items: items });
     }
 
-    deleteItems(itemsToDelete) {
+    deleteItems = (itemsToDelete) => {
         this.setState({ isItemLoading: true });
         fetch('/api/item', {
             method: 'DELETE',
@@ -102,7 +109,7 @@ class BoxDetailPage extends Component {
             });
     }
 
-    moveItems(itemsToMove, destination) {
+    moveItems = (itemsToMove, destination) => {
         this.setState({ isItemLoading: true });
         fetch('/api/item/move', {
             method: 'PUT',
@@ -126,6 +133,33 @@ class BoxDetailPage extends Component {
             });
     }
 
+    deleteBox = async() => {
+        await fetch('/api/box/' + this.props.boxId, {
+            method: 'DELETE',
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('token')
+            }
+        }).then(resp => {
+            return resp.json();
+        }).then(res => {
+            if (res.error) {
+                this.showMessage(false, 'Error', res.message);
+            } else {
+                this.props.switchPage(2);
+            }
+        });
+    }
+
+    showMessage = (isSuccessful, title, content) => {
+        const msg = {
+            success: isSuccessful,
+            title: title,
+            content: content
+        };
+        this.setState({ message: msg });
+        this.intervalId = setTimeout(() => this.setState({ message: null }), 5000);
+    }
+
     render() {
         const { boxInfo } = this.state;
         return (
@@ -133,28 +167,50 @@ class BoxDetailPage extends Component {
                 <Dimmer inverted active={boxInfo === null}>
                     <Loader inverted>Loading</Loader>
                 </Dimmer>
-                <Button icon="chevron left" content="Back" primary compact style={{ marginBottom: '5px' }} onClick={() => this.props.switchPage(2)} />
+                <Button
+                    icon="chevron left" content="Back" primary compact
+                    style={{ marginBottom: '5px' }}
+                    onClick={() => this.props.switchPage(2)} />
+                <br />
                 <div style={{display: 'inline-block'}}>
                     <Header as="h2" floated="left" style={{ marginBottom: '0px' }}>
-                        <Image src={boxInfo && boxInfo.imageURL ? boxInfo.imageURL : '/images/default_box.png'} style={{maxHeight: '60px'}}/>
+                        <Image
+                            src={boxInfo && boxInfo.imageURL ? boxInfo.imageURL : '/images/default_box.png'}
+                            style={{maxHeight: '60px'}}/>
                         {boxInfo ? boxInfo.name : null}
                     </Header>
                     <div style={{ float: 'right', paddingTop: '13px' }}>
-                        {boxInfo ? <EditBoxModal boxInfo={boxInfo} refreshBoxInfo={() => this.loadBoxInfo()}/> : null}
+                        {boxInfo ?
+                            <EditBoxModal
+                                boxInfo={boxInfo}
+                                refreshBoxInfo={this.loadBoxInfo}
+                                showMessage={this.showMessage}/> : null}
                         &nbsp; &nbsp;
-                        <Button icon="close" circular onClick={() => alert('Delete!')} negative/>
+                        <ConfirmationModal
+                            trigger={<Button icon="close" circular negative/>}
+                            title="Delete Box"
+                            content="Do you want to delete this box?"
+                            onConfirm={this.deleteBox} />
                     </div>
                 </div>
+                {this.state.message ?
+                    <Message
+                        style={{ textAlign: 'center' }}
+                        success={this.state.message.success}
+                        negative={!this.state.message.success}
+                        header={this.state.message.title}
+                        content={this.state.message.content}
+                    /> : null}
                 <AddItem
                     boxId={this.props.boxId}
-                    prependItemToList={item => this.prependItemToList(item)} />
+                    prependItemToList={this.prependItemToList} />
                 <AllItemsInBox
                     boxId={this.props.boxId}
                     isBoxLoading={boxInfo === null}
                     isItemLoading={this.state.isItemLoading}
                     items={this.state.items}
-                    deleteSelectedItems={(items) => this.deleteItems(items)}
-                    moveSelectedItems={(items, dest) => this.moveItems(items, dest)}
+                    deleteSelectedItems={this.deleteItems}
+                    moveSelectedItems={this.moveItems}
                     boxOptions={this.allBoxes}/>
             </Container>
         );

@@ -29,7 +29,7 @@ class LoginPage extends Component {
         }).catch(() => { return; });
     }
 
-    login() {
+    login = () => {
         const username = this.state.username;
         const password = this.state.password;
         if (username.trim() === '' || password.trim() === '') {
@@ -62,6 +62,10 @@ class LoginPage extends Component {
         });
     }
 
+    handleUsernameChange = e => this.setState({ username: e.target.value });
+
+    handlePasswordChange = e => this.setState({ password: e.target.value });
+
     render() {
         return (
             <Container>
@@ -79,7 +83,7 @@ class LoginPage extends Component {
                             type="text"
                             placeholder="Username"
                             value={this.state.username}
-                            onChange={(e) => this.setState({ username: e.target.value })}/>
+                            onChange={this.handleUsernameChange}/>
                     </Form.Field>
                     <Form.Field>
                         <label>Password</label>
@@ -87,12 +91,18 @@ class LoginPage extends Component {
                             type="password"
                             placeholder="Password"
                             value={this.state.password}
-                            onChange={(e) => this.setState({ password: e.target.value })}/>
+                            onChange={this.handlePasswordChange}/>
                     </Form.Field>
                 </Form>
                 <Container style={{textAlign: 'center', marginTop: '20px'}}>
                     <Button.Group size="large">
-                        <Button onClick={() => this.login()} loading={this.state.loggingIn} positive>Login</Button>
+                        <Button
+                            onClick={this.login}
+                            loading={this.state.loggingIn}
+                            disabled={this.state.loggingIn}
+                            positive>
+                            Login
+                        </Button>
                         <Button.Or />
                         <Button onClick={() => this.props.switchPage(1)}>Sign Up</Button>
                     </Button.Group>

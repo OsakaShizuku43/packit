@@ -20,19 +20,19 @@ class AddItem extends Component {
         this.inputNameRef = null;
     }
 
-    clearForm() {
+    clearForm = () => {
         this.setState({ addingCategory: 'none', quantity: 1, itemName: '', imageSelected: null });
         this.imageToUpload = null;
     }
 
-    uploadImage() {
+    uploadImage = () => {
         if (this.itemImageInput && this.itemImageInput.files[0] !== undefined) {
             this.imageToUpload = this.itemImageInput.files[0];
             this.setState({ imageSelected: this.imageToUpload.name });
         }
     }
 
-    async addItem() {
+    addItem = async() => {
         if (this.state.itemName.trim() === '') return;
 
         this.setState({ requestPending: true });
@@ -75,7 +75,7 @@ class AddItem extends Component {
         });
     }
 
-    async showAddItemForm(category) {
+    showAddItemForm = async(category) => {
         if (this.state.addingCategory === category.value) {
             this.setState({ addingCategory: 'none' });
         } else {
@@ -83,6 +83,12 @@ class AddItem extends Component {
             this.inputNameRef.focus();
         }
     }
+
+    handleItemNameChange = e => this.setState({ itemName: e.target.value });
+
+    incrementQuantity = () => this.setState({ quantity: Math.max(this.state.quantity - 1, 1) });
+
+    decrementQuantity = () => this.setState({ quantity: this.state.quantity + 1 });
 
     render() {
         return (
@@ -111,7 +117,7 @@ class AddItem extends Component {
                     animation="fade down"
                     duration={500}
                     unmountOnHide
-                    onHide={() => this.clearForm()}>
+                    onHide={this.clearForm}>
                     <Segment>
                         <Form>
                             <Form.Field inline required>
@@ -125,15 +131,15 @@ class AddItem extends Component {
                                 <label>Name</label>
                                 <Input
                                     placeholder="Item name"
-                                    onChange={(e) => this.setState({ itemName: e.target.value })}
+                                    onChange={this.handleItemNameChange}
                                     ref={(ref) => { this.inputNameRef = ref; }}/>
                             </Form.Field>
                             <Form.Field inline required>
                                 <label>Quantity</label>
                                 <Button.Group size="small">
-                                    <Button icon="minus" onClick={() => this.setState({ quantity: Math.max(this.state.quantity - 1, 1) })} />
+                                    <Button icon="minus" onClick={this.decrementQuantity} />
                                     <Button content={this.state.quantity} />
-                                    <Button icon="plus" onClick={() => this.setState({ quantity: this.state.quantity + 1 })} />
+                                    <Button icon="plus" onClick={this.incrementQuantity} />
                                 </Button.Group>
                             </Form.Field>
                             <Form.Field inline>
@@ -145,7 +151,7 @@ class AddItem extends Component {
                                     id="uploadImage"
                                     type="file"
                                     style={{display: "none"}}
-                                    onChange={() => this.uploadImage()}
+                                    onChange={this.uploadImage}
                                     ref={(input) => { this.itemImageInput = input; }}
                                     accept=".jpg, .jpeg, .png"
                                 />
@@ -153,7 +159,13 @@ class AddItem extends Component {
                             </Form.Field>
                         </Form>
                         <Container style={{textAlign: 'center', marginTop: '10px'}}>
-                            <Button onClick={() => this.addItem()} positive loading={this.state.requestPending}>Add</Button>
+                            <Button
+                                onClick={this.addItem}
+                                loading={this.state.requestPending}
+                                disabled={this.state.requestPending}
+                                positive>
+                                Add
+                            </Button>
                         </Container>
                     </Segment>
                 </Transition>

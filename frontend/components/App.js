@@ -15,12 +15,12 @@ class App extends Component {
         };
     }
 
-    switchPage(page) {
+    switchPage = (page) => {
         this.setState({ currentPage: page });
         window.scrollTo(0, 0);
     }
 
-    openBoxDetailPage(boxId, allBoxes) {
+    openBoxDetailPage = (boxId, allBoxes) => {
         this.setState({ currentPage: 4, boxOpening: boxId, allBoxes: allBoxes });
         window.scrollTo(0, 0);
     }
@@ -28,15 +28,15 @@ class App extends Component {
     render() {
         switch (this.state.currentPage) {
             case 0:
-                return <LoginPage switchPage={(p) => this.switchPage(p)}/>;
+                return <LoginPage switchPage={this.switchPage}/>;
             case 1:
-                return <RegisterPage switchPage={(p) => this.switchPage(p)}/>;
+                return <RegisterPage switchPage={this.switchPage}/>;
             case 2:
-                return <HomePage switchPage={(p) => this.switchPage(p)} openBox={(id, allBoxes) => this.openBoxDetailPage(id, allBoxes)}/>;
+                return <HomePage switchPage={this.switchPage} openBox={this.openBoxDetailPage}/>;
             case 3:
-                return <AddBoxPage switchPage={(p) => this.switchPage(p)} />;
+                return <AddBoxPage switchPage={this.switchPage} />;
             case 4:
-                return <BoxDetailPage switchPage={(p) => this.switchPage(p)} boxId={this.state.boxOpening} allBoxes={this.state.allBoxes}/>;
+                return <BoxDetailPage switchPage={this.switchPage} boxId={this.state.boxOpening} allBoxes={this.state.allBoxes}/>;
             default:
                 return <p>Under Construction</p>;
         }

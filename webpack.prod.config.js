@@ -14,7 +14,8 @@ module.exports = {
                     {
                         loader: 'babel-loader',
                         options: {
-                            presets: ['es2015', 'react']
+                            presets: ['env', 'react', 'stage-2'],
+                            plugins: ['babel-plugin-transform-runtime']
                         }
                     }
                 ]
@@ -35,20 +36,5 @@ module.exports = {
         contentBase: './public',
         hot: true
     },
-    mode: "production",
-//    plugins: [
-//        new webpack.optimize.OccurrenceOrderPlugin(),
-//        new webpack.HotModuleReplacementPlugin(),
-//        new webpack.NoEmitOnErrorsPlugin(),
-//        new webpack.DefinePlugin({
-//            'process.env': {
-//                'NODE_ENV': JSON.stringify('production')
-//            }
-//        }),
-//        new webpack.optimize.UglifyJsPlugin({
-//            compress: {
-//                warnings: false
-//            }
-//        })
-//    ]
+    mode: "production"
 };

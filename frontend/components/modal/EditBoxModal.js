@@ -69,6 +69,7 @@ class EditBoxModal extends Component {
             return resp.json();
         }).then(() => {
             this.setState({ requestPending: false, open: false });
+            this.props.showMessage(true, 'Success', 'Box information updated.');
             this.props.refreshBoxInfo();
         }).catch((err) => {
             this.setState({ requestPending: false, errorMsg: err.message });
@@ -148,7 +149,8 @@ class EditBoxModal extends Component {
 
 EditBoxModal.propTypes = {
     boxInfo: PropTypes.object,
-    refreshBoxInfo: PropTypes.func
+    refreshBoxInfo: PropTypes.func,
+    showMessage: PropTypes.func
 };
 
 export default EditBoxModal;

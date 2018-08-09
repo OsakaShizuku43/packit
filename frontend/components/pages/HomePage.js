@@ -34,7 +34,7 @@ class HomePage extends Component {
         }).catch(() => this.props.switchPage(0));
     }
 
-    getBoxes() {
+    getBoxes = () => {
         fetch('/api/box', {
             method: 'GET',
             headers: {

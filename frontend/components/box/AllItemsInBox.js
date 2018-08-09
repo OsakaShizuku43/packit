@@ -16,7 +16,7 @@ class AllItemsInBox extends Component {
         };
     }
 
-    toggleEditMode() {
+    toggleEditMode = () => {
         const toggle = { isEditing: !this.state.isEditing, destinationBox: null };
         if (this.state.isEditing) {
             toggle.itemSelected = [];
@@ -26,7 +26,7 @@ class AllItemsInBox extends Component {
         this.setState(toggle);
     }
 
-    toggleSelectItem(itemId) {
+    toggleSelectItem = (itemId) => {
         if (this.state.isEditing === false) return;
         const i = this.state.itemSelected.indexOf(itemId);
         const copy = this.state.itemSelected.slice();
@@ -38,7 +38,7 @@ class AllItemsInBox extends Component {
         this.setState({ itemSelected: copy });
     }
 
-    selectOrDeselectAll(all) {
+    selectOrDeselectAll = (all) => {
         if (all) {
             const itemSelected = [];
             this.props.items.forEach(item => itemSelected.push(item._id));
@@ -48,13 +48,13 @@ class AllItemsInBox extends Component {
         }
     }
 
-    async deleteSelectedItems() {
+    deleteSelectedItems = async() => {
         if (this.state.itemSelected.length === 0) return this.toggleEditMode();
         await this.props.deleteSelectedItems(this.state.itemSelected.slice());
         this.toggleEditMode();
     }
 
-    async moveSelectedItems() {
+    moveSelectedItems = async() => {
         if (this.state.itemSelected.length === 0) return;
         await this.props.moveSelectedItems(this.state.itemSelected.slice(), this.state.destinationBox);
         this.toggleEditMode();
@@ -71,7 +71,7 @@ class AllItemsInBox extends Component {
                     key={item._id}
                     beingEdited={this.state.editing}
                     selected={this.state.itemSelected.indexOf(item._id) >= 0}
-                    toggleSelectItem={(id) => this.toggleSelectItem(id)} />
+                    toggleSelectItem={this.toggleSelectItem} />
             );
         });
         return (
@@ -85,8 +85,9 @@ class AllItemsInBox extends Component {
                     <div style={{ float: "right" }}>
                         <Button
                             icon={this.state.isEditing ? "close" : "pencil alternate"}
-                            circular compact
-                            onClick={() => this.toggleEditMode()} disabled={this.props.items.length === 0}/>
+                            onClick={this.toggleEditMode}
+                            disabled={this.props.items.length === 0}
+                            circular compact/>
                     </div>
                 </div>
                 <Transition visible={this.state.isEditing} animation="fade down" duration={250}>
@@ -126,7 +127,7 @@ class AllItemsInBox extends Component {
                             onChange={(e, d) => this.setState({ destinationBox: d.value })} />
                         <Button
                             icon="check" size="tiny" compact circular positive style={{ marginLeft: '10px' }}
-                            onClick={() => this.moveSelectedItems()}/>
+                            onClick={this.moveSelectedItems}/>
                     </div>
                 </Transition>
                 <Transition visible={this.state.isConfirmingDeletion} animation="fade down" duration={250} unmountOnHide>
@@ -134,7 +135,7 @@ class AllItemsInBox extends Component {
                         Are you sure?
                         <Button
                             icon="check" compact circular positive style={{ marginLeft: '10px' }}
-                            onClick={() => this.deleteSelectedItems()}/>
+                            onClick={this.deleteSelectedItems}/>
                         <Button
                             icon="close" compact circular negative style={{ marginLeft: '5px' }}
                             onClick={() => this.setState({ isConfirmingDeletion: false })}/>

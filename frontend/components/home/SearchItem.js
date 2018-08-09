@@ -16,7 +16,7 @@ class SearchItem extends Component {
         };
     }
 
-    search() {
+    search = () => {
         const name = this.state.searchName;
         const category = this.state.searchCategory;
         if (name.trim().length === 0 && category === 'none') return;
@@ -34,6 +34,9 @@ class SearchItem extends Component {
             .catch(() => this.setState({ searchResult: null, isSearching: false }));
     }
 
+    handleNameChange = e => this.setState({ searchName: e.target.value });
+    handleCategoryChange = (e, d) => this.setState({ searchCategory: d.value });
+
     render() {
         return (
             <Segment>
@@ -46,7 +49,7 @@ class SearchItem extends Component {
                         <Input
                             placeholder="Name..."
                             value={this.state.searchName}
-                            onChange={(e) => this.setState({ searchName: e.target.value })}
+                            onChange={this.handleNameChange}
                             fluid/>
                     </Form.Field>
                     <Form.Field>
@@ -55,12 +58,12 @@ class SearchItem extends Component {
                             search
                             selection
                             options={categories}
-                            onChange={(e, d) => this.setState({ searchCategory: d.value })}
+                            onChange={this.handleCategoryChange}
                             defaultValue="none" />
                     </Form.Field>
                 </Form>
                 <Container style={{textAlign: 'center', marginTop: '10px'}}>
-                    <Button onClick={() => this.search()} primary>Search</Button>
+                    <Button onClick={this.search} primary>Search</Button>
                 </Container>
                 {this.state.searchResult === null ? null : <SearchResultTable items={this.state.searchResult}/>}
             </Segment>

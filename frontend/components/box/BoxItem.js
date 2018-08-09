@@ -19,7 +19,9 @@ class BoxItem extends Component {
 
     render() {
         return (
-            <List.Item style={this.props.selected ? itemSelectedStyle : itemStyle} onClick={() => this.props.toggleSelectItem(this.props.itemId)}>
+            <List.Item
+                style={this.props.selected ? itemSelectedStyle : itemStyle}
+                onClick={() => this.props.toggleSelectItem(this.props.itemId)}>
                 <List.Icon name={categories[this.props.category].icon} size="large" verticalAlign="middle" circular/>
                 <List.Content>
                     <List.Header>{this.props.name}</List.Header>
