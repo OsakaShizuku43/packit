@@ -30,24 +30,25 @@ module.exports = {
         publicPath: '/',
         filename: 'bundle.js'
     },
-    devtool: 'cheap-eval-source-map',
+    devtool: 'cheap-module-source-map',
     devServer: {
         contentBase: './public',
         hot: true
     },
-    plugins: [
-        new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoEmitOnErrorsPlugin(),
-        new webpack.DefinePlugin({
-            'process.env': {
-                'NODE_ENV': JSON.stringify('production')
-            }
-        }),
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            }
-        })
-    ]
+    mode: "production",
+//    plugins: [
+//        new webpack.optimize.OccurrenceOrderPlugin(),
+//        new webpack.HotModuleReplacementPlugin(),
+//        new webpack.NoEmitOnErrorsPlugin(),
+//        new webpack.DefinePlugin({
+//            'process.env': {
+//                'NODE_ENV': JSON.stringify('production')
+//            }
+//        }),
+//        new webpack.optimize.UglifyJsPlugin({
+//            compress: {
+//                warnings: false
+//            }
+//        })
+//    ]
 };

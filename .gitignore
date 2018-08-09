@@ -7,7 +7,6 @@ public/*
 public/images/.DS_Store
 !public/images
 !public/images/*
-!public/bundle.js
 !public/favicon.ico
 !public/index.html
 imgur_cred.json
