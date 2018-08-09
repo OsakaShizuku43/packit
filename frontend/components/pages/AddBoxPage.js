@@ -68,6 +68,7 @@ class AddBoxPage extends Component {
     render() {
         return (
             <Container>
+                <Button icon="chevron left" content="Back" compact primary style={{ marginBottom: '5px' }} onClick={() => this.props.switchPage(2)} />
                 <Container style={{textAlign: 'center'}}>
                     <Header as="h2" icon>
                         <Icon name="add square" /> Create a New Box
@@ -107,11 +108,9 @@ class AddBoxPage extends Component {
                     </Form.Field>
                 </Form>
                 <Container style={{textAlign: 'center', marginTop: '20px'}}>
-                    <Button.Group size="large">
-                        <Button onClick={() => this.createBox()} loading={this.state.requestPending} positive>Create</Button>
-                        <Button.Or />
-                        <Button onClick={() => this.props.switchPage(2)} loading={this.state.requestPending} negative>Cancel</Button>
-                    </Button.Group>
+                    <Button onClick={() => this.createBox()} loading={this.state.requestPending} size="large" positive>
+                        Submit
+                    </Button>
                     {this.state.errorMsg !== null ?
                         <Message negative>
                             <Message.Header>Cannot create box</Message.Header>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Header, List, Button, Transition, Dimmer, Loader, Segment, Dropdown, Select } from 'semantic-ui-react';
+import { Header, List, Button, Transition, Dimmer, Loader, Segment, Select } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 import BoxItem from './BoxItem';

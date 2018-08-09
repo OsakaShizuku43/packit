@@ -37,11 +37,11 @@ class SearchResultTable extends Component {
         }
         return (
             <Grid columns={2} padded="vertically">
-                <Grid.Row stretched textAlign="center" style={{ paddingBottom: '5px' }}>
-                    <Grid.Column width={11}>
+                <Grid.Row stretched style={{ paddingBottom: '5px' }}>
+                    <Grid.Column width={11} textAlign="left">
                         <Header as="h4">Name</Header>
                     </Grid.Column>
-                    <Grid.Column width={5} style={{ paddingLeft: '0px' }}>
+                    <Grid.Column width={5} style={{ paddingLeft: '0px' }} textAlign="center">
                         <Header as="h4">Location</Header>
                     </Grid.Column>
                 </Grid.Row>

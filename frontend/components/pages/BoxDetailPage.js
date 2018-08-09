@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 import AddItem from '../box/AddItem';
 import AllItemsInBox from '../box/AllItemsInBox';
+import EditBoxModal from '../box/EditBoxModal';
 
 class BoxDetailPage extends Component {
     constructor(props) {
@@ -28,19 +29,9 @@ class BoxDetailPage extends Component {
         });
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         // Get box info
-        fetch('/api/box/' + this.props.boxId, {
-            method: 'GET',
-            headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
-        }).catch(() => {
-            this.props.switchPage(0);
-        }).then((resp) => {
-            return resp.json();
-        }).then((res) => {
-            if (res.error) return console.error(res.error.message);
-            this.setState({ boxInfo: res.box });
-        });
+        await this.loadBoxInfo();
 
         // Get items in box
         fetch('/api/box/' + this.props.boxId + '/items', {
@@ -56,6 +47,21 @@ class BoxDetailPage extends Component {
         }).catch((err) => {
             console.error(err);
             this.setState({ isItemLoading: false });
+        });
+    }
+
+    loadBoxInfo() {
+        this.setState({ boxInfo: null });
+        fetch('/api/box/' + this.props.boxId, {
+            method: 'GET',
+            headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
+        }).catch(() => {
+            this.props.switchPage(0);
+        }).then((resp) => {
+            return resp.json();
+        }).then((res) => {
+            if (res.error) return console.error(res.error.message);
+            this.setState({ boxInfo: res.box });
         });
     }
 
@@ -127,15 +133,16 @@ class BoxDetailPage extends Component {
                 <Dimmer inverted active={boxInfo === null}>
                     <Loader inverted>Loading</Loader>
                 </Dimmer>
+                <Button icon="chevron left" content="Back" primary compact style={{ marginBottom: '5px' }} onClick={() => this.props.switchPage(2)} />
                 <div style={{display: 'inline-block'}}>
                     <Header as="h2" floated="left" style={{ marginBottom: '0px' }}>
                         <Image src={boxInfo && boxInfo.imageURL ? boxInfo.imageURL : '/images/default_box.png'} style={{maxHeight: '60px'}}/>
                         {boxInfo ? boxInfo.name : null}
                     </Header>
                     <div style={{ float: 'right', paddingTop: '13px' }}>
-                        <Button icon="chevron left" circular onClick={() => this.props.switchPage(2)} primary/>
+                        {boxInfo ? <EditBoxModal boxInfo={boxInfo} refreshBoxInfo={() => this.loadBoxInfo()}/> : null}
                         &nbsp; &nbsp;
-                        <Button icon="pencil alternate" circular onClick={() => this.props.switchPage(3)}/>
+                        <Button icon="close" circular onClick={() => alert('Delete!')} negative/>
                     </div>
                 </div>
                 <AddItem

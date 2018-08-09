@@ -73,6 +73,10 @@ router.put('/:boxId', (req, res, next) => {
                 box.name = req.body.name;
                 modified = true;
             }
+            if (req.body.description !== undefined && req.body.description !== null) {
+                box.description = req.body.description;
+                modified = true;
+            }
             if (req.body.imageURL !== undefined && req.body.imageURL !== null && req.body.imageURL.trim() !== '') {
                 box.imageURL = req.body.imageURL;
                 modified = true;
@@ -89,8 +93,38 @@ router.put('/:boxId', (req, res, next) => {
         });
 });
 
-// TODO: Delete a box
-
+// Delete a box
+router.delete('/:boxId', (req, res, next) => {
+    let boxFound;
+    Box.findById(req.params.boxId)
+        .exec()
+        .then((box) => {
+            if (box === null) {
+                res.status(404).json({ error: true, message: 'Box not found' });
+                throw new Error('STOP');
+            }
+            if (box.belongsTo.toString() !== req.user.userId) {
+                res.status(403).json({ error: true, message: 'This box does not belong to you' });
+                throw new Error('STOP');
+            }
+            boxFound = box;
+            return Item.find({ insideBox: req.params.boxId }).exec();
+        }).then(items => {
+            if (items.length > 0) {
+                res.status(403).json({
+                    error: true,
+                    message: 'Box is not empty, please move all items to another box before deletion'
+                });
+                throw new Error('STOP');
+            }
+            return boxFound.remove();
+        }).then(() => {
+            res.json({ error: false });
+        }).catch(err => {
+            if (err.message === 'STOP') return;
+            next(err);
+        });
+});
 
 // Get all items in a box
 router.get('/:boxId/items', (req, res, next) => {
