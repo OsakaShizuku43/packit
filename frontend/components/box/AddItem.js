@@ -86,9 +86,9 @@ class AddItem extends Component {
 
     handleItemNameChange = e => this.setState({ itemName: e.target.value });
 
-    incrementQuantity = () => this.setState({ quantity: Math.max(this.state.quantity - 1, 1) });
+    decrementQuantity = () => this.setState({ quantity: Math.max(this.state.quantity - 1, 1) });
 
-    decrementQuantity = () => this.setState({ quantity: this.state.quantity + 1 });
+    incrementQuantity = () => this.setState({ quantity: this.state.quantity + 1 });
 
     render() {
         return (
