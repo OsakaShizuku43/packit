@@ -18,14 +18,15 @@ class BoxItem extends Component {
     }
 
     render() {
+        const { name, quantity, category } = this.props.item;
         return (
             <List.Item
                 style={this.props.selected ? itemSelectedStyle : itemStyle}
-                onClick={() => this.props.toggleSelectItem(this.props.itemId)}>
-                <List.Icon name={categories[this.props.category].icon} size="large" verticalAlign="middle" circular/>
+                onClick={() => this.props.toggleSelectItem(this.props.item)}>
+                <List.Icon name={categories[category].icon} size="large" verticalAlign="middle" circular/>
                 <List.Content>
-                    <List.Header>{this.props.name}</List.Header>
-                    <List.Description>x{this.props.quantity}, {categories[this.props.category].text}</List.Description>
+                    <List.Header>{name}</List.Header>
+                    <List.Description>x{quantity}, {categories[category].text}</List.Description>
                 </List.Content>
             </List.Item>
         );
@@ -33,10 +34,7 @@ class BoxItem extends Component {
 }
 
 BoxItem.propTypes = {
-    itemId: PropTypes.string,
-    category: PropTypes.string,
-    name: PropTypes.string,
-    quantity: PropTypes.number,
+    item: PropTypes.object,
     selected: PropTypes.bool,
     toggleSelectItem: PropTypes.func
 };

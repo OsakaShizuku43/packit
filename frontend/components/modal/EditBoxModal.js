@@ -19,7 +19,7 @@ class EditBoxModal extends Component {
         this.imageToUpload = null;
     }
 
-    onClose() {
+    onClose = () => {
         const {name, description, imageURL} = this.props.boxInfo;
         this.setState({
             open: false,
@@ -33,7 +33,7 @@ class EditBoxModal extends Component {
         this.imageToUpload = null;
     }
 
-    async editBox() {
+    editBox = async() => {
         if (this.state.name.trim() === '') return;
 
         this.setState({ requestPending: true });
@@ -76,12 +76,16 @@ class EditBoxModal extends Component {
         });
     }
 
-    uploadImage() {
+    uploadImage = () => {
         if (this.itemImageInput && this.itemImageInput.files[0] !== undefined) {
             this.imageToUpload = this.itemImageInput.files[0];
             this.setState({ imageSelected: this.imageToUpload.name });
         }
     }
+
+    handleBoxNameChange = e => this.setState({ name: e.target.value });
+
+    handleBoxDescriptionChange = e => this.setState({ description: e.target.value });
 
     render() {
         return (
@@ -89,7 +93,7 @@ class EditBoxModal extends Component {
                 trigger={<Button icon="pencil alternate" circular/>}
                 open={this.state.open}
                 onOpen={() => this.setState({ open: true })}
-                onClose={() => this.onClose()}>
+                onClose={this.onClose}>
                 <Modal.Header>Change Box Info</Modal.Header>
                 <Modal.Content>
                     <Form>
@@ -99,7 +103,7 @@ class EditBoxModal extends Component {
                                 type="text"
                                 placeholder="Name of the box..."
                                 value={this.state.name}
-                                onChange={(e) => this.setState({ name: e.target.value })}/>
+                                onChange={this.handleBoxNameChange}/>
                         </Form.Field>
                         <Form.Field>
                             <label>Description</label>
@@ -107,7 +111,7 @@ class EditBoxModal extends Component {
                                 type="text"
                                 placeholder="Description..."
                                 value={this.state.description}
-                                onChange={(e) => this.setState({ description: e.target.value })}/>
+                                onChange={this.handleBoxDescriptionChange}/>
                         </Form.Field>
                         <Form.Field inline>
                             <label>Image</label>
@@ -118,7 +122,7 @@ class EditBoxModal extends Component {
                                 id="uploadImage"
                                 type="file"
                                 style={{display: "none"}}
-                                onChange={() => this.uploadImage()}
+                                onChange={this.uploadImage}
                                 ref={(input) => { this.itemImageInput = input; }}
                                 accept=".jpg, .jpeg, .png"
                             />
@@ -132,8 +136,8 @@ class EditBoxModal extends Component {
                         </Form.Field>
                     </Form>
                     <Container style={{textAlign: 'center', marginTop: '20px'}}>
-                        <Button onClick={() => this.editBox()} loading={this.state.requestPending} positive>Submit</Button>
-                        <Button onClick={() => this.onClose()} negative>Cancel</Button>
+                        <Button onClick={this.editBox} loading={this.state.requestPending} positive>Submit</Button>
+                        <Button onClick={this.onClose} negative>Cancel</Button>
                         {this.state.errorMsg !== null ?
                             <Message negative>
                                 <Message.Header>Cannot create box</Message.Header>

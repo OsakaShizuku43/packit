@@ -132,10 +132,9 @@ router.put('/:itemId', (req, res, next) => {
             if (req.body.quantity) item.quantity = req.body.quantity;
             if (req.body.category) item.category = req.body.category;
             if (req.body.name) item.name = req.body.name;
-            if (req.body.insideBox) item.insideBox = req.body.insideBox;
             return item.save();
         })
-        .then((modifiedItem) => res.json(modifiedItem))
+        .then((modifiedItem) => res.json({ error: false, item: modifiedItem }))
         .catch((err) => {
             if (err.message === 'STOP') return;
             next(err);

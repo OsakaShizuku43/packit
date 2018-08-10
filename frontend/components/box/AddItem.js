@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Header, Button, Transition, Form, Input, Segment, Container, Icon } from 'semantic-ui-react';
+import { Header, Button, Transition, Form, Input, Segment, Container } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 import categories from '../../categories.json';
@@ -12,58 +12,30 @@ class AddItem extends Component {
             addingCategoryText: 'None',
             quantity: 1,
             itemName: '',
-            imageSelected: null,
             requestPending: false
         };
-        this.itemImageInput = null;
-        this.imageToUpload = null;
         this.inputNameRef = null;
     }
 
-    clearForm = () => {
-        this.setState({ addingCategory: 'none', quantity: 1, itemName: '', imageSelected: null });
-        this.imageToUpload = null;
-    }
+    clearForm = () => this.setState({ addingCategory: 'none', quantity: 1, itemName: '' });
 
-    uploadImage = () => {
-        if (this.itemImageInput && this.itemImageInput.files[0] !== undefined) {
-            this.imageToUpload = this.itemImageInput.files[0];
-            this.setState({ imageSelected: this.imageToUpload.name });
-        }
-    }
-
-    addItem = async() => {
+    addItem = () => {
         if (this.state.itemName.trim() === '') return;
 
         this.setState({ requestPending: true });
 
-        let imageURL;
-        if (this.imageToUpload !== null) {
-            const data = new FormData();
-            data.append('image', this.imageToUpload);
-            await fetch('/api/image', {
-                method: 'POST',
-                headers: { Authorization: 'Bearer ' + localStorage.getItem('token') },
-                body: data
-            }).then((resp) => {
-                return resp.json();
-            }).then((res) => {
-                imageURL = res.imageURL;
-            }).catch((err) => {
-                console.error(err);
-            });
-        }
-        const data = {
-            quantity: this.state.quantity,
-            category: this.state.addingCategory,
-            insideBox: this.props.boxId,
-            name: this.state.itemName
-        };
-        if (imageURL) data.imageURL = imageURL;
-        await fetch('/api/item', {
+        fetch('/api/item', {
             method: 'POST',
-            headers: { Authorization: 'Bearer ' + localStorage.getItem('token'), 'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('token'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                quantity: this.state.quantity,
+                category: this.state.addingCategory,
+                insideBox: this.props.boxId,
+                name: this.state.itemName
+            })
         }).then((resp) => {
             return resp.json();
         }).then((res) => {
@@ -141,21 +113,6 @@ class AddItem extends Component {
                                     <Button content={this.state.quantity} />
                                     <Button icon="plus" onClick={this.incrementQuantity} />
                                 </Button.Group>
-                            </Form.Field>
-                            <Form.Field inline>
-                                <label>Image</label>
-                                <label className="ui icon button" htmlFor="uploadImage">
-                                    <Icon name="upload" /> &nbsp; Upload
-                                </label>
-                                <input
-                                    id="uploadImage"
-                                    type="file"
-                                    style={{display: "none"}}
-                                    onChange={this.uploadImage}
-                                    ref={(input) => { this.itemImageInput = input; }}
-                                    accept=".jpg, .jpeg, .png"
-                                />
-                                <span>&nbsp; {this.state.imageSelected}</span>
                             </Form.Field>
                         </Form>
                         <Container style={{textAlign: 'center', marginTop: '10px'}}>

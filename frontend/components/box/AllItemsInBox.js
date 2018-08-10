@@ -3,6 +3,7 @@ import { Header, List, Button, Transition, Dimmer, Loader, Segment, Select } fro
 import PropTypes from 'prop-types';
 
 import BoxItem from './BoxItem';
+import EditItemModal from '../modal/EditItemModal';
 
 class AllItemsInBox extends Component {
     constructor(props) {
@@ -12,7 +13,9 @@ class AllItemsInBox extends Component {
             itemSelected: [],
             isMoving: false,
             isConfirmingDeletion: false,
-            destinationBox: null
+            destinationBox: null,
+            editItemModalOpen: false,
+            itemEditing: null
         };
     }
 
@@ -26,8 +29,14 @@ class AllItemsInBox extends Component {
         this.setState(toggle);
     }
 
-    toggleSelectItem = (itemId) => {
-        if (this.state.isEditing === false) return;
+    toggleSelectItem = (item) => {
+        const itemId = item._id;
+
+        if (this.state.isEditing === false) {
+            this.toggleEditItem(item);
+            return;
+        }
+
         const i = this.state.itemSelected.indexOf(itemId);
         const copy = this.state.itemSelected.slice();
         if (i >= 0) {
@@ -60,14 +69,22 @@ class AllItemsInBox extends Component {
         this.toggleEditMode();
     }
 
+    changeItemInList = (newItem) => {
+        this.props.changeItemInList(newItem);
+        this.onEditItemModalClose();
+    }
+
+    toggleEditItem = (item) => this.setState({ itemEditing: item, editItemModalOpen: true });
+
+    onEditItemModalOpen = () => this.setState({ editItemModalOpen: true });
+
+    onEditItemModalClose = () => this.setState({ editItemModalOpen: false, itemEditing: null });
+
     render() {
         const boxItems = this.props.items.slice().reverse().map((item) => {
             return (
                 <BoxItem
-                    itemId={item._id}
-                    quantity={item.quantity}
-                    name={item.name}
-                    category={item.category}
+                    item={item}
                     key={item._id}
                     beingEdited={this.state.editing}
                     selected={this.state.itemSelected.indexOf(item._id) >= 0}
@@ -79,6 +96,14 @@ class AllItemsInBox extends Component {
                 <Dimmer inverted active={this.props.isItemLoading && !this.props.isBoxLoading}>
                     <Loader inverted>Loading</Loader>
                 </Dimmer>
+
+                {this.state.itemEditing ?
+                    <EditItemModal
+                        open={this.state.editItemModalOpen}
+                        onOpen={this.onEditItemModalOpen}
+                        onClose={this.onEditItemModalClose}
+                        item={this.state.itemEditing}
+                        changeItemInList={this.changeItemInList}/> : null}
 
                 <div style={{display: 'inline-block'}}>
                     <Header as="h3" icon="clipboard list" content="All Items" floated="left" style={{ marginBottom: '5px' }}/>
@@ -159,6 +184,7 @@ AllItemsInBox.propTypes = {
     items: PropTypes.array,
     deleteSelectedItems: PropTypes.func,
     moveSelectedItems: PropTypes.func,
+    changeItemInList: PropTypes.func,
     boxOptions: PropTypes.array
 };
 

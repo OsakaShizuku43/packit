@@ -83,7 +83,18 @@ class BoxDetailPage extends Component {
         this.state.items.forEach(item => {
             if (itemsToDelete.indexOf(item._id) === -1) items.push(item);
         });
-        this.setState({ items: items });
+        this.setState({ items });
+    }
+
+    changeItemInList = (newItem) => {
+        const items = this.state.items.slice();
+        for (var i = 0; i < items.length; ++i) {
+            if (items[i]._id === newItem._id) {
+                items[i] = newItem;
+                break;
+            }
+        }
+        this.setState({ items });
     }
 
     deleteItems = (itemsToDelete) => {
@@ -211,6 +222,7 @@ class BoxDetailPage extends Component {
                     items={this.state.items}
                     deleteSelectedItems={this.deleteItems}
                     moveSelectedItems={this.moveItems}
+                    changeItemInList={this.changeItemInList}
                     boxOptions={this.allBoxes}/>
             </Container>
         );

@@ -11,7 +11,7 @@ class ConfirmationModal extends Component {
         };
     }
 
-    async onConfirm() {
+    onConfirm = async() => {
         this.setState({ requestPending: true });
         if (this.props.onConfirm) {
             await this.props.onConfirm();
@@ -19,7 +19,7 @@ class ConfirmationModal extends Component {
         this.setState({ isOpen: false, requestPending: false });
     }
 
-    onCancel() {
+    onCancel = () => {
         this.setState({ isOpen: false });
         if (this.props.onCancel) this.props.onCancel();
     }
@@ -40,7 +40,7 @@ class ConfirmationModal extends Component {
                 <Modal.Actions>
                     <Button
                         color="green"
-                        onClick={() => this.onConfirm()}
+                        onClick={this.onConfirm}
                         loading={this.state.requestPending}
                         disabled={this.state.requestPending}
                         inverted>
@@ -48,7 +48,7 @@ class ConfirmationModal extends Component {
                     </Button>
                     <Button
                         color="red"
-                        onClick={() => this.onCancel()}
+                        onClick={this.onCancel}
                         loading={this.state.requestPending}
                         disabled={this.state.requestPending}
                         inverted>
