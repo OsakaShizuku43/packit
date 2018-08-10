@@ -10,7 +10,7 @@ import User from '../models/User';
 // For Token Verification only
 router.post('/verify', (req, res) => {
     const token = req.headers.authorization;
-    if (token === undefined || typeof token !== 'string') return res.sendStatus(400);
+    if (token === undefined || typeof token !== 'string') return res.status(400).json({ error: true });
 
     let userInfo;
     try {
@@ -66,7 +66,12 @@ router.post('/login', (req, res) => {
 });
 
 router.post('/register', (req, res) => {
-    if (req.body.invitation !== process.env.INVITATION) return res.sendStatus(400);
+    if (req.body.invitation !== process.env.INVITATION) {
+        return res.status(403).json({
+            error: true,
+            message: 'Invitation code does not match'
+        });
+    }
     const username = req.body.username;
     const password = req.body.password;
     const salt = bcrypt.genSaltSync(10);
