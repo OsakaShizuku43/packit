@@ -22,7 +22,14 @@ if (process.env.MONGODB_URI === undefined) {
     console.error('No MONGODB_URI found. Did you source env.sh?');
     process.exit(1);
 }
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true }, () => {
+const options = {
+    useNewUrlParser: true,
+    server: {
+        auto_reconnect: true,
+        poolSize: 10
+    }
+};
+mongoose.connect(process.env.MONGODB_URI, options, () => {
     console.log('Connected to MongoDB');
 });
 
